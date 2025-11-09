@@ -1,6 +1,7 @@
 def Open(file_name, mode):
+    # Функція для безпечного відкриття файлу
     try:
-        file = open(file_name, mode)
+        file = open(file_name, mode, encoding="utf-8")
     except:
         print("File", file_name, "wasn't opened!")
         return None
@@ -21,7 +22,7 @@ if file1_w is not None:
     print("File TF17_1.txt was closed!")
 
 
-# --- б) переписування у TF17_2 через TF17_3 ---
+# --- б) створення TF17_3 (з цифрами та іншими символами) ---
 file1_r = Open("TF17_1.txt", "r")
 file3_w = Open("TF17_3.txt", "w")
 
@@ -30,7 +31,7 @@ if file1_r is not None and file3_w is not None:
     digits = "".join(ch for ch in data if ch.isdigit())
     others = "".join(ch for ch in data if not ch.isdigit())
 
-    file3_w.write(digits + others)
+    file3_w.write(digits + "\n" + others)
     print("Data successfully written to TF17_3.txt!")
 
     file1_r.close()
@@ -38,14 +39,24 @@ if file1_r is not None and file3_w is not None:
     print("Files TF17_1.txt and TF17_3.txt were closed!")
 
 
-# --- формування TF17_2: по 10 символів у рядку ---
+# --- формування TF17_2 ---
 file3_r = Open("TF17_3.txt", "r")
 file2_w = Open("TF17_2.txt", "w")
 
 if file3_r is not None and file2_w is not None:
     text = file3_r.read()
-    for i in range(0, len(text), 10):
-        file2_w.write(text[i:i + 10] + "\n")
+
+    # Витягуємо цифри та інші символи окремо
+    digits = "".join(ch for ch in text if ch.isdigit())
+    others = "".join(ch for ch in text if not ch.isdigit() and ch != "\n")
+
+    # Записуємо спочатку всі цифри в одному рядку
+    file2_w.write(digits + "\n")
+
+    # Потім усі інші символи по 10 у рядку
+    for i in range(0, len(others), 10):
+        file2_w.write(others[i:i + 10] + "\n")
+
     print("Data successfully written to TF17_2.txt!")
 
     file3_r.close()
@@ -62,3 +73,5 @@ if file2_r is not None:
         print(line.strip())
     file2_r.close()
     print("File TF17_2.txt was closed!")
+
+
