@@ -1,21 +1,51 @@
-Python 3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)] on win32
-Enter "help" below or click "Help" above for more information.
->>> 
-================ RESTART: C:/Users/user/Documents/пейтон/1006.py ===============
-Country Name | 2018 [YR2018] | 2019 [YR2019]
-Ukraine : 48.9 | 50.2
-Italy : 32.1 | 31.5
-Germany : 46.9 | 47.5
-France : 30.8 | 31.2
-Poland : 55.7 | 56.2
-USA : 12.2 | 11.7
-Spain : 34.4 | 35.1
-Switzerland : 64.3 | 65.0
-Japan : 18.5 | 18.6
-Canada : 30.7 | 31.0
+import csv
+import os
 
-Введіть назви країн через кому (наприклад: Ukraine, Italy, France): 
-USA, Japan
-Результати пошуку:
-USA : 12.2 | 11.7
-Japan : 18.5 | 18.6
+flag = False
+
+# --- спроба відкрити основний файл ---
+try:
+    csvfile = open("Exports.csv", "r", encoding="utf-8")
+    reader = csv.DictReader(csvfile, delimiter=";")
+
+    print("Country Name | 2018 [YR2018] | 2019 [YR2019]")
+    for row in reader:
+        print(row["Country Name"], ":", row["2018 [YR2018]"], "|", row["2019 [YR2019]"])
+
+    csvfile.close()
+
+except:
+    print("Файл Exports.csv не знайдено!")
+
+
+# --- пошук даних за введеними назвами країн ---
+try:
+    csvfile = open("Exports.csv", "r", encoding="utf-8")
+    reader = csv.DictReader(csvfile, delimiter=";")
+
+    print("\nВведіть назви країн через кому (наприклад: Ukraine, Italy, France): ")
+    countries = input().split(",")
+
+    countries = [c.strip().capitalize() for c in countries]  # очищення пробілів
+
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("Результати пошуку:")
+
+    with open("Exports_search_results.csv", "w", newline="", encoding="utf-8") as csvfile2:
+        writer = csv.writer(csvfile2, delimiter=";")
+        writer.writerow(["Country Name", "2018 [YR2018]", "2019 [YR2019]"])
+
+        for row in reader:
+            if row["Country Name"].capitalize() in countries:
+                flag = True
+                print(row["Country Name"], ":", row["2018 [YR2018]"], "|", row["2019 [YR2019]"])
+                writer.writerow((row["Country Name"], row["2018 [YR2018]"], row["2019 [YR2019]"]))
+
+    csvfile.close()
+
+    if not flag:
+        print("Жодна з введених країн не знайдена у файлі.")
+
+except:
+    print("Файл Exports.csv не знайдено!")
+
