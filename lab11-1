@@ -1,0 +1,99 @@
+import pandas as pd
+def print_menu():
+print("\n" + "=" * 50) 
+print(" Робота з датафреймом") 
+print("=" * 50) 
+print("1. Вивести перші три рядки") 
+print("2. Перевірка типу даних") 
+print("3. К-сть рядків та стовпців") 
+print("4. Описова статистика") 
+print("5. Виведення таблиці") 
+print("6. Вибір учнів з середнім балом більше 8") 
+print("7. Сортування учнів за середнім балом") 
+print("8. Розділення учнів на дві групи за списком") 
+print("9. Виведення максимального середнього балу у кожній групі") 		print("0. Завершення роботи") 
+print("=" * 50)
+#Читання CSV файлу
+df = pd.read_csv("students_grades.csv", index_col=0)
+#Додавання стовпчика з середнім балом
+if 'Average_Grade' not in df.columns: 
+df['Average_Grade'] = df.mean(axis=1)
+def task1(): 
+print("Перші 3 рядки DataFrame:") 
+print(df.head(3)) 
+print("\n" + "-" * 50 + "\n")
+def task2(): 
+print("Типи даних кожного стовпця:") 
+print(df.dtypes) 
+print("\n" + "-" * 50 + "\n")
+def task3(): 
+print("Форма DataFrame (рядки, стовпці):") 
+print(df.shape) 
+print("\n" + "-" * 50 + "\n")
+def task4(): 
+print("Описова статистика DataFrame:") 
+print(df.describe())
+def task5():
+ print("Краще розтягнути вікно виводу даних або командного рядка для кращого результату") 
+print(df.to_string())
+def task6(): 
+high_achievers = df[df['Average_Grade'] > 8] 
+print(high_achievers.to_string())
+def task7(): 
+high_achievers = df[df['Average_Grade'] > 8] 
+high_achievers_sorted = high_achievers.sort_values(by='Average_Grade', ascending=False)
+print("Учні з середнім балом > 8, відсортовані за спаданням:")
+print(high_achievers_sorted.to_string())
+ 
+def task8(): 
+students_sorted = df.sort_values(by='Average_Grade', ascending=False) 
+mid_index = len(students_sorted) // 2
+group_1 = students_sorted.iloc[:mid_index]
+group_2 = students_sorted.iloc[mid_index:]
+
+print("Група 1:")
+print(group_1.to_string())
+print("\nГрупа 2:")
+print(group_2.to_string())
+ 
+def task9(): 
+students_sorted = df.sort_values(by='Average_Grade', ascending=False) 
+mid_index = len(students_sorted) // 2
+group_1 = students_sorted.iloc[:mid_index]
+group_2 = students_sorted.iloc[mid_index:]
+
+max_group_1 = group_1['Average_Grade'].max()
+max_group_2 = group_2['Average_Grade'].max()
+
+print(f"Максимальний середній бал у групі 1: {max_group_1}")
+print(f"Максимальний середній бал у групі 2: {max_group_2}")
+ 
+def main(): 
+while True: 
+print_menu() 
+choice = input("Оберіть опцію (1-9): ").strip()
+   	if choice == "1":
+      	task1()
+    	elif choice == "2":
+      	task2()
+    	elif choice == "3":
+      	task3()
+    	elif choice == "4":
+      	task4()
+    	elif choice == "5":
+      	task5()
+    	elif choice == "6":
+      	task6()
+    	elif choice == "7":
+      	task7()
+    	elif choice == "8":
+      	task8()
+    	elif choice == "9":
+      	task9()
+  	elif choice == "0":
+      	print("Роботу програми завершено")
+        	break
+    else:
+        print("Помилка. Будь ласка, введіть число від 1 до 9.")
+ 
+main()
