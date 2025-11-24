@@ -1,0 +1,87 @@
+import pandas as pd 
+import matplotlib.pyplot as plt
+def print_menu():
+ print("\n" + "=" * 50) 
+print(" Робота з датафреймом") 
+print("=" * 50) 
+print("1. Загальна кількість велосипедистів у 2011 році") 
+print("2. Загальна кількість велосипедистів на кожному датчику") 
+print("3. Найпопулярніший місяць на трьох обраних датчиках")
+ print("4. Графік") print("0. Завершення роботи")
+ print("=" * 50)
+#Читання CSV файлу
+df = pd.read_csv("comptage_velo_2011.csv", sep=',', encoding='latin1', low_memory=False)
+print("Основні характеристики датафрейму")
+print(df.head())
+print(df.info())
+print(df.describe()) print("=" * 50)
+ print(df.columns)
+plt.style.use('ggplot') plt.rcParams['figure.figsize'] = (15, 5)
+#Об'єднуємо дату і час
+df['datetime'] = pd.to_datetime(df['Date'] + ' ' + df['Unnamed: 1'], dayfirst=True, errors='coerce')
+#Встановлюємо datetime як індекс
+df.set_index('datetime', inplace=True)
+#Фільтруємо дані за 2011 рік 
+df_2011 = df[df.index.year == 2011]
+def task1():
+ # Загальна кількість велосипедистів за рік по всіх доріжках 
+df_2011_total = df.drop(columns=['Date', 'Unnamed: 1']).sum().sum() 
+print("Загальна кількість велосипедистів у 2011 році:", df_2011_total)
+def task2(): 
+# Загальна кількість велосипедистів на кожній велодоріжці 
+total_per_counter = df_2011.drop(columns=['Date', 'Unnamed: 1']).sum() 
+print("Загальна кількість велосипедистів на кожній велодоріжці:") print(total_per_counter.sort_values(ascending=False).head(10)) # Топ-10
+def task3(): 
+# Вибираємо три велодоріжки з найбільшою сумою за рік 
+total_per_counter = df_2011.drop(columns=['Date', 'Unnamed: 1']).sum() 
+selected_counters = total_per_counter.sort_values(ascending=False).index[:3]
+# Сумуємо по місяцях для обраних велодоріжок
+monthly = df_2011[selected_counters].copy()
+monthly['month'] = df_2011.index.month
+monthly_grouped = monthly.groupby('month')[selected_counters].sum()
+
+# Знаходимо місяць з найбільшою кількістю для кожної велодоріжки
+most_popular_month = monthly_grouped.idxmax()
+print("Найпопулярніший місяць на трьох обраних велодоріжках:")
+print(most_popular_month)
+ 
+def task4():
+ # Вибираємо три велодоріжки з найбільшою сумою за рік 
+total_per_counter = df_2011.drop(columns=['Date', 'Unnamed: 1']).sum() 
+selected_counters = df_2011.drop(columns=['Date', 'Unnamed: 1']).columns
+# Сумуємо по місяцях для обраних велодоріжок
+monthly = df_2011[selected_counters].copy()
+monthly['month'] = df_2011.index.month
+monthly_grouped = monthly.groupby('month')[selected_counters].sum()
+
+# Будуємо лінійний графік для всіх трьох доріжок
+monthly_grouped.plot(kind='line', marker='o')
+plt.title("Завантаженість топ-3 велодоріжок по місяцях (2011)")
+plt.xlabel("Місяць")
+plt.ylabel("Кількість велосипедистів")
+plt.xticks(range(1, 13), ['Січ', 'Лют', 'Бер', 'Квіт', 'Трав', 'Чер', 
+                          'Лип', 'Сер', 'Вер', 'Жовт', 'Лис', 'Гру'], rotation=45)
+plt.grid(True)
+plt.legend(selected_counters, title="Велодоріжка")
+plt.show()
+ 
+def main(): 
+while True: 
+print_menu()
+   		choice = input("Оберіть опцію (1-4): ").strip()
+    
+    		if choice == "1":
+        			task1()
+    		elif choice == "2":
+       			 task2()
+   		 elif choice == "3":
+        			task3()
+    		elif choice == "4":
+        			task4()
+    		elif choice == "0":
+        			print("Роботу програми завершено")
+        			break
+    		else:
+        			print("Помилка. Будь ласка, введіть число від 1 до 4.")
+ 
+main()
