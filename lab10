@@ -1,0 +1,173 @@
+import matplotlib.pyplot as plt
+import sympy as sp import numpy as np import csv import json import sys import os
+def print_menu(): print("\n" + "=" * 50) print(" ПОБУДОВА ГРАФІКІВ") print("=" * 50) print("1. Y(x)=-x^cos(5*x), x=[0...10]") print("2. Візуалізація графіком") print("3. Візуалізація діаграмою") print("4. Кругова діаграма") print("0. Вихід з програми") print("=" * 50)
+def task1():
+x = np.linspace(1, 10, 60) 
+
+y = -(x ** np.cos(5 * x))
+
+plt.plot(x, y, label='-x^cos(5x)', color = "red", linewidth = 3)
+
+plt.title('My plot', fontsize=15)
+
+plt.xlabel('x', fontsize=12, color='blue')
+plt.ylabel('y', fontsize=12, color='blue')
+plt.legend()
+plt.grid(True)
+
+plt.show()
+ 
+def task2():
+import csv
+import matplotlib.pyplot as plt
+
+FILENAME = "Elem_school_male.csv"
+
+INDICATOR = "SE.PRM.UNER.MA"
+
+COUNTRY1 = "Austria"
+COUNTRY2 = "Belgium"
+COUNTRY3 = "Hungary"
+
+data = {}
+
+with open(FILENAME, "r", encoding="utf-8-sig") as file:
+    reader = csv.reader(file)
+    header = next(reader)
+
+    years = [int(col.split()[0]) for col in header[4:]]
+
+    for row in reader:
+        if len(row) < 5:
+            continue
+
+        if row[1].strip() != INDICATOR:
+            continue
+
+        country = row[2].strip()
+
+        values_raw = row[4:]
+
+        values = []
+        for v in values_raw:
+            v = v.strip()
+            if v == ".." or v == "":
+                values.append(None)
+            else:
+                values.append(float(v))
+
+        data[country] = values
+
+print("Країни у словнику:", data.keys())
+
+plt.figure(figsize=(10, 6))
+plt.plot(years, data[COUNTRY1], marker="o", linewidth=2, label=COUNTRY1)
+plt.plot(years, data[COUNTRY2], marker="o", linewidth=2, label=COUNTRY2)
+plt.plot(years, data[COUNTRY3], marker="o", linewidth=2, label=COUNTRY3)
+
+plt.xlabel("Рік")
+plt.ylabel("Кількість дітей, які випустились з початкової школи")
+plt.title("Візуалізація даних на графіку")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+ 
+def task2_diagram(): FILENAME = "Elem_school_male.csv"
+gender = input("Введіть стать (male / female): ").strip().lower()
+
+if gender == "male":
+    INDICATOR = "SE.PRM.UNER.MA"
+elif gender == "female":
+    INDICATOR = "SE.PRM.UNER.FE"
+else:
+    print("Некоректний ввід. Потрібно male або female.")
+    return
+
+print("Наявні країни: Austria, Belgium, Hungary")
+country_input = input("Введіть назву країни (наприклад: Austria): ").strip()
+
+data = {}
+
+with open(FILENAME, "r", encoding="utf-8-sig") as file:
+    reader = csv.reader(file)
+    header = next(reader)
+
+    years = [int(col.split()[0]) for col in header[4:]]
+
+    for row in reader:
+        if len(row) < 5:
+            continue
+
+        if row[1].strip() != INDICATOR:
+            continue
+
+        country = row[2].strip()
+
+        values_raw = row[4:]
+        values = []
+        for v in values_raw:
+            v = v.strip()
+            if v == ".." or v == "":
+                values.append(None)
+            else:
+                values.append(float(v))
+
+        data[country] = values
+
+if country_input not in data:
+    print("Країну '{country_input}' не знайдено у файлі.")
+    print("Доступні країни:", list(data.keys()))
+    return
+
+values = data[country_input]
+
+filtered_years = [y for y, v in zip(years, values) if v is not None]
+filtered_values = [v for v in values if v is not None]
+
+plt.figure(figsize=(12, 6))
+plt.bar(filtered_years, filtered_values)
+
+plt.xlabel("Рік")
+plt.ylabel("Кількість дітей поза школою (primary)")
+plt.title(f"{INDICATOR}: Дані для країни {country_input}")
+plt.grid(axis="y", linestyle="--", alpha=0.5)
+plt.tight_layout()
+plt.show()
+ 
+def task3():
+with open("marks.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+
+names = [item["Surname"] for item in data]
+averages = [sum(item["Grades"]) / len(item["Grades"]) for item in data]
+
+plt.figure(figsize=(8, 8))
+plt.pie(
+    averages,
+    labels=names,
+    autopct="%1.1f%%",
+    startangle=90,
+)
+
+plt.title("Середній бал учнів (у відсотках від загальної суми)")
+plt.show()
+ 
+def main(): while True: print_menu()
+   choice = input("Оберіть опцію (1-4): ").strip()
+    
+    if choice == "1":
+        task1()
+    elif choice == "2":
+        task2()
+    elif choice == "3":
+        task2_diagram()
+    elif choice == "4":
+        task3()
+    elif choice == "0":
+        print("Роботу програми завершено")
+        break
+    else:
+        print("Помилка. Будь ласка, введіть число від 1 до 4.")
+ 
+main()
