@@ -1,0 +1,37 @@
+import nltk from nltk.corpus 
+import stopwords from nltk.probability 
+import FreqDist import string import matplotlib.pyplot as plt
+#Завантажуємо потрібні ресурси
+nltk.download('punkt')
+ nltk.download('stopwords') 
+nltk.download('punkt_tab')
+#Читання тексту з локального файлу
+with open('milton-paradise.txt', 'r', encoding='utf-8') as file: text = file.read()
+#Токенізація тексту на слова
+words = nltk.word_tokenize(text)
+Кількість слів у тексті
+total_words = len(words) 
+print(f"Загальна кількість слів у тексті: {total_words}")
+#Перший аналіз: 10 найбільш вживаних слів (оригінальний текст)
+freq_dist = FreqDist(words)
+ most_common_words = freq_dist.most_common(10)
+ print("10 найбільш вживаних слів (оригінальний текст):") 
+print(most_common_words)
+#Побудова стовпчастої діаграми
+words_list, counts = zip(*most_common_words) 
+plt.figure(figsize=(10,5)) plt.bar(words_list, counts, color='skyblue') 
+plt.title("10 найбільш вживаних слів у тексті (оригінальний текст)") 
+plt.ylabel("Частота") 
+plt.show()
+#Видалення стоп-слів та пунктуації
+stop_words = set(stopwords.words('english')) 
+words_cleaned = [word.lower() for word in words if word.isalpha() and word.lower() not in stop_words]
+#Другий аналіз: 10 найбільш вживаних слів після очищення
+freq_dist_cleaned = FreqDist(words_cleaned) 
+most_common_cleaned = freq_dist_cleaned.most_common(10) 
+print("10 найбільш вживаних слів (після видалення стоп-слів та пунктуації):") print(most_common_cleaned)
+#Побудова стовпчастої діаграми
+words_cleaned_list, counts_cleaned = zip(*most_common_cleaned) 
+plt.figure(figsize=(10,5)) plt.bar(words_cleaned_list, counts_cleaned, color='lightcoral') plt.title("10 найбільш вживаних слів (очищений текст)") 
+plt.ylabel("Частота") 
+plt.show()
